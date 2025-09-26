@@ -1,25 +1,9 @@
 import React, { useState } from "react";
 import CoolTable from "./table";
+import InputForm from "./form";
 
 function MyApp() {
-    const [ModemSpeed, setCharacters] = useState([
-        {
-            speed: "56k",
-            note: "not always supported by isp providers"
-        },
-        {
-            speed: "33.6k",
-            note: "max phone line bandwidth"
-        },
-        {
-            speed: "28.8k",
-            note: "almost there"
-        },
-        {
-            speed: "14.4k",
-            note: "switched to kbit/s naming"
-        }
-        ]);
+    const [ModemSpeed, setCharacters] = useState([]);
     function RemoveOneCharacter(index) {
         const updated = ModemSpeed.filter((character, i) => {
             return i !== index;
@@ -34,6 +18,7 @@ function MyApp() {
                     ModemInformation={ModemSpeed}
                     RemoveEntry={RemoveOneCharacter}
                 />
+                <InputForm />
             </div>
         </div> 
     );
