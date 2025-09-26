@@ -11,14 +11,14 @@ function CoolTableHead() {
     );
 }
 
-function CoolTableBody(dialup) {
-    const rows = dialup.ModemInformation.map((row, index) => {
+function CoolTableBody(props) {
+    const rows = props.ModemInformation.map((row, index) => {
         return(
             <tr key={index}>
                 <td>{row.speed}</td>
                 <td>{row.note}</td>
                 <td>
-                    <button onClick={() => dialup.RemoveEntry(index)}>go away</button>
+                    <button onClick={() => props.RemoveEntry(index)}>go away</button>
                 </td>
             </tr>
         )
@@ -30,13 +30,13 @@ function CoolTableBody(dialup) {
     );
 }
 
-function CoolTable(dialup) {
+function CoolTable(props) {
     return (
         <table>
             <CoolTableHead />
             <CoolTableBody
-                ModemInformation={dialup.ModemInformation}
-                RemoveEntry={dialup.RemoveEntry}
+                ModemInformation={props.ModemInformation}
+                RemoveEntry={props.RemoveEntry}
             />
         </table>
     );
