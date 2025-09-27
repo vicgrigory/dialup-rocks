@@ -4,8 +4,8 @@ function CoolTableHead() {
     return (
         <thead>
             <tr>
-                <th>hey</th>
-                <th>chat</th>
+                <th>Modem Speed</th>
+                <th>Notes</th>
             </tr>
         </thead>
     );
@@ -18,7 +18,7 @@ function CoolTableBody(props) {
                 <td>{row.speed}</td>
                 <td>{row.note}</td>
                 <td>
-                    <button onClick={() => props.RemoveEntry(index)}>go away</button>
+                    <button class="remove" onClick={() => props.RemoveEntry(index)}>Remove</button>
                 </td>
             </tr>
         )

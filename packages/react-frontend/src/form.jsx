@@ -20,11 +20,13 @@ function InputForm(gng) {
 
     return (
         <form>
-            <label htmlFor="speed">Modem Speed</label>
-            <input type="Text" name="speed" id="speed" value={modem.speed} onChange={DoChange}/>
-            <label htmlFor="note">Note</label>
-            <input type="Text" name="note" id="note" value={modem.note} onChange={DoChange}/>
-            <input type="button" value="enter modem" onClick={Submit} />
+            <label htmlFor="speed">Speed: </label>
+            <input type="Text" name="speed" id="speed" placeholder="baud or kbit/s" value={modem.speed} onChange={DoChange}/>
+            <br/>
+            <label htmlFor="note">Note: </label>
+            <input type="Text" name="note" id="note" placeholder="whatever you wish.." value={modem.note} onChange={DoChange}/>
+            <br/>
+            <input type="button" value="Submit Modem!" onClick={Submit} />
         </form>
     );
 }

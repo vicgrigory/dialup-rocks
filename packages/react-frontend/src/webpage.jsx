@@ -17,17 +17,21 @@ function MyApp() {
     }
 
     return (
-        <div>
-            <h1>Modem</h1>
-            <h2>Enter a modem speed:</h2>
-            <InputForm handleSubmit={UpdateTable}/>
-            <div className="container">
-                <CoolTable
-                    ModemInformation={ModemSpeed}
-                    RemoveEntry={RemoveOneCharacter}
-                />
-                
+        <div className="container">
+            <div className="box">
+                <h1>Modems!!</h1>
+                <p>I love modems. I love dialup. I love cables. I love the dialup sound.</p>
+                <p>What if... we could have a TON of weird modem speeds??</p>
+                <p>Try it out.......</p>
             </div>
+            <div class="box">
+                <h1>Interact!!</h1>
+                <h2>Enter any modem speed:</h2>
+                <p>These are usually in bauds or kbit/s. You can follow this format for realism.</p>
+                <InputForm handleSubmit={UpdateTable}/>
+                <br/>
+                <CoolTable ModemInformation={ModemSpeed} RemoveEntry={RemoveOneCharacter} />
+            </div> 
         </div> 
     );
 }
