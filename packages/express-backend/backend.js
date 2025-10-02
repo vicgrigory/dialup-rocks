@@ -88,7 +88,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
-
 app.get("/speeds", (req, res) => {
     const connect = req.query.connection;
     if (connect != undefined) {
@@ -99,6 +98,15 @@ app.get("/speeds", (req, res) => {
         res.send(speeds);
     }
 });
+app.get("/speeds/:id", (req, res) => {
+    const id = req.params["id"]; //same as above see req.query.connection
+    let result = findSpeedById(id);
+    if (result === undefined) {
+        res.status(404).send("could not find modem id");
+    } else {
+        res.send(result);
+    }
+})
 
 //functions
 const findSpeedByName = (connect) => {
@@ -106,6 +114,8 @@ const findSpeedByName = (connect) => {
         (speed) => speed["connection"] === connect
     );
 };
+const findSpeedById = (id) =>
+    speeds["speed_list"].find((speed) => speed["id"] === id);
 
 // port
 app.listen(port, () => {
