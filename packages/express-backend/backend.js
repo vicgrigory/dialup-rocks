@@ -6,78 +6,78 @@ const speeds = {
     speed_list: [
         {
             id: "1",
-            connection: "110 baud // Bell 101",
-            bitrate: "0.11 kbit/s",
+            connection: "110 baud ~ Bell 101",
+            bitrate: "0.11 kbits",
         },
         {
             id: "2",
-            connection: "300 baud // Bell 103 // V.21",
-            bitrate: "0.3 kbit/s",
+            connection: "300 baud ~ Bell 103 ~ V.21",
+            bitrate: "0.3 kbits",
         },
         {
             id: "3",
-            connection: "1200 baud // Bell 212A // V.22",
-            bitrate: "1.2 kbit/s",
+            connection: "1200 baud ~ Bell 212A ~ V.22",
+            bitrate: "1.2 kbits",
         },
         {
             id: "4",
-            connection: "2400 baud // V.22bis",
-            bitrate: "2.4 kbit/s",
+            connection: "2400 baud",
+            bitrate: "2.4 kbits ~ V.22bis",
         },
         {
             id: "4.5",
-            connection: "2400 baud // V.26bis",
-            bitrate: "2.4kbit/s",
+            connection: "2400 baud",
+            bitrate: "2.4kbits ~ V.26bis",
         },
         {
             id: "5",
-            connection: "4800 baud // V.27ter",
-            bitrate: "4.8 kbit/s",
+            connection: "4800 baud ~ V.27ter",
+            bitrate: "4.8 kbits",
         },
         {
             id: "6",
-            connection: "9600 baud // V.32",
-            bitrate: "9.6 kbit/s",
+            connection: "9600 baud ~ V.32",
+            bitrate: "9.6 kbits",
         },
         {
             id: "7",
-            connection: "14.4 kbit/s // V.32bis",
-            bitrate: "14.4 kbit/s",
+            connection: "14.4 kbits ~ V.32bis",
+            bitrate: "14.4 kbits",
         },
         {
             id: "8",
-            connection: "28.8 kbit/s // V.34",
-            bitrate: "28.8 kbit/s",
+            connection: "28.8 kbits ~ V.34",
+            bitrate: "28.8 kbits",
         },
         {
             id: "9",
-            connection: "33.6 kbit/s // V.34",
-            bitrate: "33.6 kbit/s",
+            connection: "33.6 kbits ~ V.34",
+            bitrate: "33.6 kbits",
         },
         {
             id: "10",
-            connection: "56k kbit/s // V.90",
-            bitrate: "56.0 - 33.6 kbit/s",
+            connection: "56k kbits ~ V.90",
+            bitrate: "56.0 - 33.6 kbits",
         },
         {
             id: "11",
-            connection: "56k bit/s // V.92",
-            bitrate: "56.0 - 48.0 kbit/s",
+            connection: "56k bits ~ V.92",
+            bitrate: "56.0 - 48.0 kbits",
         },
         {
             id: "12",
             connection: "ISDN",
-            bitrate: "64.0 - 128.0 kbit/s",
+            bitrate: "64.0 - 128.0 kbits",
         },
         {
             id: "12",
-            connection: "Hardware Compression // V.92/V.44",
-            bitrate: "56.0 - 320.0 kbit/s",
+            connection: "Hardware Compression ~ V.92,V.44",
+            bitrate: "56.0 - 320.0 kbits",
         },
         {
             id: "13",
             connection: "Server-side Web Compression",
-            bitrate: "200.0 - 1000.0 kbit/s",
+            bitrate: "200.0 - 1000.0 kbits",
         }
     ] // info from en.wikipedia.org/wiki/Dial-up_Internet_access
 }
@@ -106,6 +106,32 @@ app.get("/speeds/:id", (req, res) => {
     } else {
         res.send(result);
     }
+});
+app.get("/speeds/:connection/:bitrate", (req, res) => {
+    const connection = req.params["connection"];
+    const bitrate = req.params["bitrate"];
+    let result = findSpeedConBit(connection, bitrate);
+    if (result === undefined) {
+        res.status(404).send("could not find anything");
+    } else {
+        res.send(result);
+    }
+});
+
+//others
+app.post("/speeds", (req, res) => {
+    const speedToAdd = req.body;
+    addSpeed(speedToAdd);
+    res.send();
+});
+app.delete("/speeds/:id", (req, res) => {
+    const speedId = req.params["id"];
+    let result = removeSpeed(speedId);
+    if (result === null) {
+        res.status(404).send("could not find modem to remove");
+    } else {
+        res.send();
+    }
 })
 
 //functions
@@ -116,6 +142,26 @@ const findSpeedByName = (connect) => {
 };
 const findSpeedById = (id) =>
     speeds["speed_list"].find((speed) => speed["id"] === id);
+    
+const addSpeed = (speed) =>  {
+    speeds["speed_list"].push(speed);
+    return speed;
+};
+const removeSpeed = (id) => {
+    let findSpeed = speeds["speed_list"].findIndex((speed) => speed["id"] === id); // not finding it?
+    if (findSpeed > -1) {
+        speeds["speed_list"].splice(findSpeed, 1);
+        return id;
+    }
+    return null;
+    // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
+    // https://dev.to/therealmrmumba/beginners-guide-to-handling-delete-requests-in-nodejs-with-express-28dh
+}
+const findSpeedConBit = (connect, bitrate) => {
+    let nameMatch = findSpeedByName(connect);
+    let fullMatch = nameMatch.filter((speed) => speed["bitrate"] === bitrate);
+    return fullMatch;
+}
 
 // port
 app.listen(port, () => {
