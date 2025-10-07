@@ -2,29 +2,36 @@ import React, {useState} from "react";
 
 function InputForm(gng) {
     const [modem, setModem] = useState({
-        speed: "",
-        note: ""
+        id: "",
+        connection: "",
+        bitrate: ""
     });
 
     function DoChange(event) {
         const {name, value} = event.target;
-        if (name === "note")
-            setModem({ speed: modem["speed"], note: value });
-        else setModem({ speed: value, note: modem["note"]});
+        if (name === "id")
+            setModem({ id: value, connection: modem["connection"], bitrate: modem["bitrate"] })
+        else if (name === "connection")
+            setModem({ id: modem["id"], connection: value, bitrate: modem["bitrate"]})
+        else // name === "bitrate"
+            setModem({id: modem["id"], connection: modem["connection"], bitrate: value})
     }
 
     function Submit() {
         gng.handleSubmit(modem);
-        setModem({speed: "", note: ""});
+        setModem({ id: "", connection: "", bitrate: ""});
     }
 
     return (
         <form>
-            <label htmlFor="speed">Speed: </label>
-            <input type="Text" name="speed" id="speed" placeholder="baud or kbit/s" value={modem.speed} onChange={DoChange}/>
+            <label htmlFor="id">ID: </label>
+            <input type="Text" name="id" id="id" placeholder="any id" value={modem.id} onChange={DoChange}/>
             <br/>
-            <label htmlFor="note">Note: </label>
-            <input type="Text" name="note" id="note" placeholder="whatever you wish.." value={modem.note} onChange={DoChange}/>
+            <label htmlFor="connection">Name/ Connection: </label>
+            <input type="Text" name="connection" id="connection" placeholder="name/ connection type of modem" value={modem.connection} onChange={DoChange}/>
+            <br/>
+            <label htmlFor="bitrate">Bitrate of Transfer: </label>
+            <input type="Test" name="bitrate" id="bitrate" placeholder="baud or kbit/s" value={modem.bitrate} onChange={DoChange}/>
             <br/>
             <input type="button" value="Submit Modem!" onClick={Submit} />
         </form>

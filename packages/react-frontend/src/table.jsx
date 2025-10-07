@@ -4,8 +4,9 @@ function CoolTableHead() {
     return (
         <thead>
             <tr>
-                <th>Modem Speed</th>
-                <th>Notes</th>
+                <th>Modem ID</th>
+                <th>Name/ Connection</th>
+                <th>Bitrate/ Speed</th>
             </tr>
         </thead>
     );
@@ -15,10 +16,11 @@ function CoolTableBody(props) {
     const rows = props.ModemInformation.map((row, index) => {
         return(
             <tr key={index}>
-                <td>{row.speed}</td>
-                <td>{row.note}</td>
+                <td>{row.id}</td>
+                <td>{row.connection}</td>
+                <td>{row.bitrate}</td>
                 <td>
-                    <button class="remove" onClick={() => props.RemoveEntry(index)}>Remove</button>
+                    <button className="remove" onClick={() => props.RemoveEntry(index)}>Remove</button>
                 </td>
             </tr>
         )

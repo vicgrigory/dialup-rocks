@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CoolTable from "./table";
 import InputForm from "./form";
 
@@ -13,8 +13,35 @@ function MyApp() {
     }
 
     function UpdateTable(modem) {
-        setCharacters([...ModemSpeed, modem]);
+        postModem(modem)
+        .then(() => setCharacters([...ModemSpeed, modem]))
+        .catch((error) => {
+            console.log(error);
+        });
     }
+
+    function fetchModems() {
+        const promise = fetch("http://localhost:8000/speeds");
+        return promise;
+    };
+
+    function postModem(modem) {
+        const promise = fetch("http://localhost:8000/speeds", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(modem),
+        });
+        return promise;
+    }
+
+    useEffect(() => {
+        fetchModems()
+        .then((res) => res.json())
+        .then((json) => setCharacters(json["speed_list"]))
+        .catch((error) => { console.log(error); });
+    }, []);
 
     return (
         <div className="container">
