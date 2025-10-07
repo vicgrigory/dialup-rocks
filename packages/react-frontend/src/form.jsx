@@ -2,31 +2,25 @@ import React, {useState} from "react";
 
 function InputForm(gng) {
     const [modem, setModem] = useState({
-        id: "",
         connection: "",
         bitrate: ""
     });
 
     function DoChange(event) {
         const {name, value} = event.target;
-        if (name === "id")
-            setModem({ id: value, connection: modem["connection"], bitrate: modem["bitrate"] })
-        else if (name === "connection")
-            setModem({ id: modem["id"], connection: value, bitrate: modem["bitrate"]})
+        if (name === "connection")
+            setModem({ connection: value, bitrate: modem["bitrate"]})
         else // name === "bitrate"
-            setModem({id: modem["id"], connection: modem["connection"], bitrate: value})
+            setModem({ connection: modem["connection"], bitrate: value})
     }
 
     function Submit() {
         gng.handleSubmit(modem);
-        setModem({ id: "", connection: "", bitrate: ""});
+        setModem({ connection: "", bitrate: ""});
     }
 
     return (
         <form>
-            <label htmlFor="id">ID: </label>
-            <input type="Text" name="id" id="id" placeholder="any id" value={modem.id} onChange={DoChange}/>
-            <br/>
             <label htmlFor="connection">Name/ Connection: </label>
             <input type="Text" name="connection" id="connection" placeholder="name/ connection type of modem" value={modem.connection} onChange={DoChange}/>
             <br/>

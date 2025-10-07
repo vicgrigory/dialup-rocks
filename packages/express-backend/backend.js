@@ -95,9 +95,9 @@ app.get("/speeds", (req, res) => {
     if (connect != undefined) {
         let result = findSpeedByName(connect);
         result = { speed_list: result };
-        res.send(result);
+        res.status(200).send(result);
     } else {
-        res.send(speeds);
+        res.status(200).send(speeds);
     }
 });
 app.get("/speeds/:id", (req, res) => {
@@ -106,7 +106,7 @@ app.get("/speeds/:id", (req, res) => {
     if (result === undefined) {
         res.status(404).send("could not find modem id");
     } else {
-        res.send(result);
+        res.status(200).send(result);
     }
 });
 app.get("/speeds/:connection/:bitrate", (req, res) => {
@@ -116,7 +116,7 @@ app.get("/speeds/:connection/:bitrate", (req, res) => {
     if (result === undefined) {
         res.status(404).send("could not find anything");
     } else {
-        res.send(result);
+        res.status(200).send(result);
     }
 });
 
@@ -124,7 +124,7 @@ app.get("/speeds/:connection/:bitrate", (req, res) => {
 app.post("/speeds", (req, res) => {
     const speedToAdd = req.body;
     addSpeed(speedToAdd);
-    res.send();
+    res.status(201).send("new modem created");
 });
 app.delete("/speeds/:id", (req, res) => {
     const speedId = req.params["id"];
@@ -132,11 +132,17 @@ app.delete("/speeds/:id", (req, res) => {
     if (result === null) {
         res.status(404).send("could not find modem to remove");
     } else {
-        res.send();
+        res.status(204).send();
     }
 })
 
 //functions
+const generateID = () => {
+    let ids = [];
+    speeds["speed_list"].map((x) => ids.push(x.id));
+    return Math.max(...ids) + 1;
+}
+
 const findSpeedByName = (connect) => {
     return speeds["speed_list"].filter(
         (speed) => speed["connection"] === connect
@@ -146,11 +152,12 @@ const findSpeedById = (id) =>
     speeds["speed_list"].find((speed) => speed["id"] === id);
     
 const addSpeed = (speed) =>  {
-    speeds["speed_list"].push(speed);
+    let newId = generateID();
+    speeds["speed_list"].push({id: `${newId}`, connection: speed.connection, speed: speed.bitrate});
     return speed;
 };
 const removeSpeed = (id) => {
-    let findSpeed = speeds["speed_list"].findIndex((speed) => speed["id"] === id); // not finding it?
+    let findSpeed = speeds["speed_list"].findIndex((speed) => speed["id"] === id);
     if (findSpeed > -1) {
         speeds["speed_list"].splice(findSpeed, 1);
         return id;

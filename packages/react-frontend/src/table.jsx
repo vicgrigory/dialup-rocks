@@ -4,7 +4,6 @@ function CoolTableHead() {
     return (
         <thead>
             <tr>
-                <th>Modem ID</th>
                 <th>Name/ Connection</th>
                 <th>Bitrate/ Speed</th>
             </tr>
@@ -16,7 +15,6 @@ function CoolTableBody(props) {
     const rows = props.ModemInformation.map((row, index) => {
         return(
             <tr key={index}>
-                <td>{row.id}</td>
                 <td>{row.connection}</td>
                 <td>{row.bitrate}</td>
                 <td>
