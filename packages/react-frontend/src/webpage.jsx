@@ -5,16 +5,29 @@ import InputForm from "./form";
 function MyApp() {
     const [ModemSpeed, setCharacters] = useState([]);
 
-    function RemoveOneCharacter(index) {
-        const updated = ModemSpeed.filter((character, i) => {
-            return i !== index;
-        });
-        setCharacters(updated);
+    function removeOneCharacter(index) {
+        const promise = fetch(`http://localhost:8000/speeds/${index}`, {
+            method: "DELETE",
+        })
+        .then((value) => {console.log(value.status); callRemove(value.status, index);})
+        .catch((error) => {console.log(error);});
     }
 
-    function UpdateTable(modem) {
+    function callRemove(value, index) {
+        if (value == 204) {
+            console.log(`removing index ${index}`);
+            const updated = ModemSpeed.filter((character) => {
+                return character.id !== `${index}`;
+            });
+            console.log(updated);
+            setCharacters(updated);
+        }
+    }
+
+    function updateTable(modem) {
         postModem(modem)
-        .then(() => setCharacters([...ModemSpeed, modem]))
+        .then(response => response.json())
+        .then((data) => setCharacters([...ModemSpeed, data]))
         .catch((error) => {
             console.log(error);
         });
@@ -55,9 +68,9 @@ function MyApp() {
                 <h1>Interact!!</h1>
                 <h2>Enter any modem speed:</h2>
                 <p>These are usually in bauds or kbit/s. You can follow this format for realism.</p>
-                <InputForm handleSubmit={UpdateTable}/>
+                <InputForm handleSubmit={updateTable}/>
                 <br/>
-                <CoolTable ModemInformation={ModemSpeed} RemoveEntry={RemoveOneCharacter} />
+                <CoolTable ModemInformation={ModemSpeed} RemoveEntry={removeOneCharacter} />
             </div> 
         </div> 
     );

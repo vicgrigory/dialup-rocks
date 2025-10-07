@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import cors from "cors";
 
 const app = express();
@@ -116,15 +116,15 @@ app.get("/speeds/:connection/:bitrate", (req, res) => {
     if (result === undefined) {
         res.status(404).send("could not find anything");
     } else {
-        res.status(200).send(result);
+        res.status(200).send();
     }
 });
 
 //others
 app.post("/speeds", (req, res) => {
     const speedToAdd = req.body;
-    addSpeed(speedToAdd);
-    res.status(201).send("new modem created");
+    let result = addSpeed(speedToAdd);
+    res.status(201).send(result);
 });
 app.delete("/speeds/:id", (req, res) => {
     const speedId = req.params["id"];
@@ -153,8 +153,9 @@ const findSpeedById = (id) =>
     
 const addSpeed = (speed) =>  {
     let newId = generateID();
-    speeds["speed_list"].push({id: `${newId}`, connection: speed.connection, speed: speed.bitrate});
-    return speed;
+    let item = {id: `${newId}`, connection: speed.connection, bitrate: speed.bitrate}
+    speeds["speed_list"].push(item);
+    return item;
 };
 const removeSpeed = (id) => {
     let findSpeed = speeds["speed_list"].findIndex((speed) => speed["id"] === id);
