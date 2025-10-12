@@ -1,5 +1,5 @@
 import express, { response } from "express";
-import ".modem-services";
+import ms from "./modem-services.js";
 import cors from "cors";
 
 const app = express();
@@ -91,44 +91,44 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
-app.get("/speeds", (req, res) => {
+app.get("/speeds", async (req, res) => {
     const connect = req.query.connection;
-    let result = findModemGivenConnBit(undefined, connect, undefined);
+    let result = await findModemGivenConnBit(undefined, connect, undefined);
     if (result === undefined) {
         res.status(404).send("Modem(s) could not be found!");
     } else {
         res.status(200).send(result);
     }
 });
-app.get("/speeds/:id", (req, res) => {
+app.get("/speeds/:id", async (req, res) => {
     const id = req.params["id"]; //same as above see req.query.connection
-    let result = findModemGivenConnBit(id, undefined, undefined);
+    let result = await findModemGivenConnBit(id, undefined, undefined);
     if (result === undefined) {
         res.status(404).send("Modem could not be found!");
     } else {
         res.status(200).send(result);
     }
 });
-app.get("/speeds/:connection/:bitrate", (req, res) => {
+app.get("/speeds/:connection/:bitrate", async (req, res) => {
     const connection = req.params["connection"];
     const bitrate = req.params["bitrate"];
-    let result = findSpeedGivenConnBit(undefined, connection, bitrate);
+    let result = await findModemGivenConnBit(undefined, connection, bitrate);
     if (result === undefined) {
         res.status(404).send("Modem(s) could not be found!");
     } else {
-        res.status(200).send();
+        res.status(200).send(result);
     }
 });
 
 //others
-app.post("/speeds", (req, res) => {
+app.post("/speeds", async (req, res) => {
     const speedToAdd = req.body;
-    let result = addModem(speedToAdd);
+    let result = await ms.addModem(speedToAdd);
     res.status(201).send(result);
 });
-app.delete("/speeds/:id", (req, res) => {
+app.delete("/speeds/:id", async (req, res) => {
     const id = req.params["id"];
-    let result = removeModem(id);
+    let result = await ms.removeModem(id);
     if (result === null) {
         res.status(404).send("No modem found to remove!");
     } else {
@@ -137,15 +137,14 @@ app.delete("/speeds/:id", (req, res) => {
 })
 
 // general function to send to services.js
-const findModemGivenConnBit = (id, connection, bitrate) => {
+const findModemGivenConnBit = async (id, connection, bitrate) => {
     if (!(id === undefined)) {
-        return findModemById(id)
-        .then(response => response.json())
-        .catch((error) => {console.log(error);})
-    } else {
-        return getModems(connection, bitrate)
-        .then(response => response.json())
+        return await ms.findModem(id)
         .catch((error) => {console.log(error);});
+    } else {
+        let promise = await ms.getModems(connection, bitrate)
+        .catch((error) => {console.log(error);});
+        return promise;
     }
 }
 

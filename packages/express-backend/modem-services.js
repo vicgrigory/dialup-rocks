@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import modemSchema from "./modem";
+import modemSchema from "./modem.js";
 
 mongoose.set("debug", true);
 
 mongoose
-  .connect("mongodb://localhost:27017/users", {
+  .connect("mongodb://localhost:27017/speeds", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -45,7 +45,7 @@ function findModemByBitrate(bitrate) {
   return modemSchema.find({ bitrate: bitrate });
 }
 function findModemByBoth(connection, bitrate) {
-  return modemSchema.find({ connection: connection, bitrate: bitrate});
+  return modemSchema.find({ connection: connection, bitrate: bitrate });
 }
 
 export default {

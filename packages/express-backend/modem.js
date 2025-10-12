@@ -12,12 +12,12 @@ const ModemSchema = new mongoose.Schema(
       required: true,
       trim: true,
       validate(value) {
-        if (!value.includes("kbit/s")||!value.includes("baud"))
+        if (!value.includes("kbit/s")&&!value.includes("baud"))
           throw new Error("Invalid speed! Enter in kbit/s or baud.");
       },
     },
   },
-  { collection: "users_list" }
+  { collection: "modems_list" }
 );
 
 const Modem = mongoose.model("Modem", ModemSchema);

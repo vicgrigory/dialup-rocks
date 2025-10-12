@@ -15,9 +15,8 @@ function MyApp() {
 
     function callRemove(value, index) {
         if (value == 204) {
-            console.log(`removing index ${index}`);
             const updated = ModemSpeed.filter((character) => {
-                return character.id !== `${index}`;
+                return character._id !== `${index}`;
             });
             console.log(updated);
             setCharacters(updated);
@@ -27,7 +26,7 @@ function MyApp() {
     function updateTable(modem) {
         postModem(modem)
         .then(response => response.json())
-        .then((data) => setCharacters([...ModemSpeed, data]))
+        .then((data) => {setCharacters([...ModemSpeed, data]);})
         .catch((error) => {
             console.log(error);
         });
@@ -52,7 +51,7 @@ function MyApp() {
     useEffect(() => {
         fetchModems()
         .then((res) => res.json())
-        .then((json) => setCharacters(json["speed_list"]))
+        .then((json) => setCharacters(json))
         .catch((error) => { console.log(error); });
     }, []);
 
