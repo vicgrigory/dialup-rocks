@@ -93,19 +93,18 @@ app.get("/", (req, res) => {
 });
 app.get("/speeds", (req, res) => {
     const connect = req.query.connection;
-    if (connect != undefined) {
-        let result = findSpeedByName(connect);
-        result = { speed_list: result };
-        res.status(200).send(result);
+    let result = findModemGivenConnBit(undefined, connect, undefined);
+    if (result === undefined) {
+        res.status(404).send("Modem(s) could not be found!");
     } else {
-        res.status(200).send(speeds);
+        res.status(200).send(result);
     }
 });
 app.get("/speeds/:id", (req, res) => {
     const id = req.params["id"]; //same as above see req.query.connection
-    let result = findSpeedById(id);
+    let result = findModemGivenConnBit(id, undefined, undefined);
     if (result === undefined) {
-        res.status(404).send("could not find modem id");
+        res.status(404).send("Modem could not be found!");
     } else {
         res.status(200).send(result);
     }
@@ -113,9 +112,9 @@ app.get("/speeds/:id", (req, res) => {
 app.get("/speeds/:connection/:bitrate", (req, res) => {
     const connection = req.params["connection"];
     const bitrate = req.params["bitrate"];
-    let result = findSpeedConBit(connection, bitrate);
+    let result = findSpeedGivenConnBit(undefined, connection, bitrate);
     if (result === undefined) {
-        res.status(404).send("could not find anything");
+        res.status(404).send("Modem(s) could not be found!");
     } else {
         res.status(200).send();
     }
@@ -124,54 +123,30 @@ app.get("/speeds/:connection/:bitrate", (req, res) => {
 //others
 app.post("/speeds", (req, res) => {
     const speedToAdd = req.body;
-    let result = addSpeed(speedToAdd);
+    let result = addModem(speedToAdd);
     res.status(201).send(result);
 });
 app.delete("/speeds/:id", (req, res) => {
-    const speedId = req.params["id"];
-    let result = removeSpeed(speedId);
+    const id = req.params["id"];
+    let result = removeModem(id);
     if (result === null) {
-        res.status(404).send("could not find modem to remove");
+        res.status(404).send("No modem found to remove!");
     } else {
         res.status(204).send();
     }
 })
 
-//functions
-const generateID = () => {
-    let ids = [];
-    speeds["speed_list"].map((x) => ids.push(x.id));
-    return Math.max(...ids) + 1;
-}
-
-const findSpeedByName = (connect) => {
-    return speeds["speed_list"].filter(
-        (speed) => speed["connection"] === connect
-    );
-};
-const findSpeedById = (id) =>
-    speeds["speed_list"].find((speed) => speed["id"] === id);
-    
-const addSpeed = (speed) =>  {
-    let newId = generateID();
-    let item = {id: `${newId}`, connection: speed.connection, bitrate: speed.bitrate}
-    speeds["speed_list"].push(item);
-    return item;
-};
-const removeSpeed = (id) => {
-    let findSpeed = speeds["speed_list"].findIndex((speed) => speed["id"] === id);
-    if (findSpeed > -1) {
-        speeds["speed_list"].splice(findSpeed, 1);
-        return id;
+// general function to send to services.js
+const findModemGivenConnBit = (id, connection, bitrate) => {
+    if (!(id === undefined)) {
+        return findModemById(id)
+        .then(response => response.json())
+        .catch((error) => {console.log(error);})
+    } else {
+        return getModems(connection, bitrate)
+        .then(response => response.json())
+        .catch((error) => {console.log(error);});
     }
-    return null;
-    // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
-    // https://dev.to/therealmrmumba/beginners-guide-to-handling-delete-requests-in-nodejs-with-express-28dh
-}
-const findSpeedConBit = (connect, bitrate) => {
-    let nameMatch = findSpeedByName(connect);
-    let fullMatch = nameMatch.filter((speed) => speed["bitrate"] === bitrate);
-    return fullMatch;
 }
 
 // port

@@ -18,33 +18,39 @@ function getModems(connection, bitrate) {
     promise = findModemByConnection(connection);
   } else if (bitrate && !connection) {
     promise = findModemByBitrate(bitrate);
+  } else if (connection && bitrate) {
+    promise = findModemByBoth(connection, bitrate);
   }
   return promise;
 }
 
-function findModemById(id) {
+// functions not used in getmodems
+function findModem(id) {
   return modemSchema.findById(id);
 }
-
 function addModem(modem) {
   const modemToAdd = new modemSchema(modem);
   const promise = modemToAdd.save();
   return promise;
 }
+function removeModem(id) {
+  return modemSchema.findByIdAndDelete(id);
+}
 
-// Used in getModem, no need for export
+// internal
 function findModemByConnection(connection) {
   return modemSchema.find({ connection: connection });
 }
-
 function findModemByBitrate(bitrate) {
   return modemSchema.find({ bitrate: bitrate });
 }
+function findModemByBoth(connection, bitrate) {
+  return modemSchema.find({ connection: connection, bitrate: bitrate});
+}
 
 export default {
+  findModem,
   addModem,
-  getModems,
-  findModemById,
-  findModemByConnection,
-  findModemByBitrate,
+  removeModem,
+  getModems
 };
