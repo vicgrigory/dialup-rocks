@@ -7,9 +7,13 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently 'npm run dev --prefix packages/react-frontend' 'npm run dev --prefix packages/express-backend' 'mongosh'"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
